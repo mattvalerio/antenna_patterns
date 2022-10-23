@@ -1,4 +1,5 @@
 # From: https://scipython.com/book2/chapter-7-matplotlib/examples/modelling-an-antenna-array/
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -18,15 +19,36 @@ def get_directive_gain(g, minDdBi=-20):
 
 # Wavelength, antenna spacing, feed coefficients.
 lam = 1
-d = lam / 2
-w = np.array([1, -1, 1])
-# Calculate gain and directive gain; plot on a polar chart.
-phi, g = gain(d, w)
-DdBi = get_directive_gain(g)
+d = lam / 4
 
-fig = plt.figure()
-ax = fig.add_subplot(projection='polar')
-ax.plot(phi, DdBi)
-ax.set_rticks([-20, -15, -10, -5])
-ax.set_rlabel_position(45)
-plt.show()
+def plot_antenna_pattern(amp, inc_phase):
+    # Apply incremental phase shift to each element
+    amplitude = np.array(amp)
+    w = amplitude * np.exp(1j * np.arange(len(amplitude)) * inc_phase)
+
+    # Calculate gain and directive gain; plot on a polar chart.
+    phi, g = gain(d, w)
+    DdBi = get_directive_gain(g)
+
+    fig = plt.figure()
+    ax = fig.add_subplot(projection='polar')
+    ax.plot(phi, DdBi)
+    ax.set_rticks([-20, -15, -10, -5])
+    ax.set_rlabel_position(45)
+    plt.show()
+
+# 2 element, uniform amplitude, no incremental phase shift
+plot_antenna_pattern([1, 1], 0.0)
+
+# 10 element, uniform amplitude, no incremental phase shift
+plot_antenna_pattern([1,1,1,1,1,1,1,1,1,1], 0.0)
+
+# 10 element, uniform amplitude, scanning incremental phase shift
+for i in range(5):
+    plot_antenna_pattern([1,1,1,1,1,1,1,1,1,1], i*np.pi/16)
+
+# 11 element, linear taper on edges, scanning incremental phase shift
+for i in range(5):
+    plot_antenna_pattern([0.25, 0.5, 0.75, 1, 1, 1, 1, 1, 0.75, 0.5, 0.25], i*np.pi/16)
+
+# TODO (mvalerio): Add ability to plot multiple traces on the same chart
