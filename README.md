@@ -4,8 +4,8 @@ Currently this includes 1-dimensional linearly-spaced arrays.
 
 ## Requirements
 I've tested this code with:
-- Python 3.10.5 (64-bit), installed to `C:\Program Files\Python310\`)
-- Visual Studio Code, with the following extensions
+- [Python 3.10.5 (64-bit)](https://www.python.org/downloads/), installed to `C:\Program Files\Python310\`)
+- [Visual Studio Code](https://code.visualstudio.com/download), with the following extensions
   - Python (from Microsoft)
   - Jupyter (from Microsoft)
 
