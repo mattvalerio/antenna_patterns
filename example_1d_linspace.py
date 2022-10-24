@@ -51,4 +51,50 @@ for i in range(5):
 for i in range(5):
     plot_antenna_pattern([0.25, 0.5, 0.75, 1, 1, 1, 1, 1, 0.75, 0.5, 0.25], i*np.pi/16)
 
-# TODO (mvalerio): Add ability to plot multiple traces on the same chart
+
+
+# Split the functionality up so that we can add multiple traces to the same plot
+def create_axis():
+    fig = plt.figure()
+    ax = fig.add_subplot(projection='polar')   
+    return ax
+
+def add_antenna_pattern(ax, amp, inc_phase):
+    # Apply incremental phase shift to each element
+    amplitude = np.array(amp)
+    w = amplitude * np.exp(1j * np.arange(len(amplitude)) * inc_phase)
+
+    # Calculate gain and directive gain; plot on a polar chart.
+    phi, g = gain(d, w)
+    DdBi = get_directive_gain(g)
+
+    # Subsequent calls to ax.plot will add a new trace to the plot in a new color
+    ax.plot(phi, DdBi)
+
+def plot_figure(ax):
+    ax.set_rticks([-20, -15, -10, -5])
+    ax.set_rlabel_position(45)
+    plt.show()
+
+
+# 2 element, uniform amplitude, no incremental phase shift
+ax = create_axis()
+add_antenna_pattern(ax, [1, 1], 0.0)
+plot_figure(ax)
+
+# 10 element, uniform amplitude, no incremental phase shift
+ax = create_axis()
+add_antenna_pattern(ax, [1,1,1,1,1,1,1,1,1,1], 0.0)
+plot_figure(ax)
+
+# 10 element, uniform amplitude, scanning incremental phase shift
+ax = create_axis()
+for i in range(10):
+    add_antenna_pattern(ax, [1,1,1,1,1,1,1,1,1,1], i*np.pi/16)
+plot_figure(ax)
+
+# 11 element, linear taper on edges, scanning incremental phase shift
+ax = create_axis()
+for i in range(10):
+    add_antenna_pattern(ax, [0.25, 0.5, 0.75, 1, 1, 1, 1, 1, 0.75, 0.5, 0.25], i*np.pi/16)
+plot_figure(ax)
