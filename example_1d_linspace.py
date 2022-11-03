@@ -3,6 +3,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+tick_values = [-20, -15, -10, -5, 0, 5, 10, 15, 20]
+
 def gain(d, w):
     """Return the power as a function of azimuthal angle, phi."""
     phi = np.linspace(0, 2*np.pi, 1000)
@@ -14,7 +16,8 @@ def gain(d, w):
 
 def get_directive_gain(g, minDdBi=-20):
     """Return the "directive gain" of the antenna array producing gain g."""
-    DdBi = 10 * np.log10(g / np.max(g))
+    DdBi = 10 * np.log10(g / np.max(g)) # Relative, since normalized to max
+    #DdBi = 10 * np.log10(g) # Absolute, but still not relative to isotropic
     return np.clip(DdBi, minDdBi, None)
 
 # Wavelength, antenna spacing, feed coefficients.
@@ -33,12 +36,18 @@ def plot_antenna_pattern(amp, inc_phase):
     fig = plt.figure()
     ax = fig.add_subplot(projection='polar')
     ax.plot(phi, DdBi)
-    ax.set_rticks([-20, -15, -10, -5])
+    ax.set_rticks(tick_values)
     ax.set_rlabel_position(45)
     plt.show()
 
+# Single dipole
+plot_antenna_pattern([1], 0.0)
+
 # 2 element, uniform amplitude, no incremental phase shift
 plot_antenna_pattern([1, 1], 0.0)
+
+# 2 element, uniform amplitude, 180deg phase shift
+plot_antenna_pattern([1, 1], np.pi)
 
 # 10 element, uniform amplitude, no incremental phase shift
 plot_antenna_pattern([1,1,1,1,1,1,1,1,1,1], 0.0)
@@ -72,7 +81,7 @@ def add_antenna_pattern(ax, amp, inc_phase):
     ax.plot(phi, DdBi)
 
 def plot_figure(ax):
-    ax.set_rticks([-20, -15, -10, -5])
+    ax.set_rticks(tick_values)
     ax.set_rlabel_position(45)
     plt.show()
 
